@@ -18,7 +18,25 @@ def raw_encrypt(data, password, salt):
     encrypted_data = cipher_suite.encrypt(data)
     return encrypted_data
 
+def raw_decrypt(encrypted_data, password, salt):
+    kdf = PBKDF2HMAC(
+        algorithm=SHA256(),
+        length=32,
+        salt=salt,
+        iterations=100000,
+        backend=default_backend()
+    )
+    encrypted_password = urlsafe_b64encode(kdf.derive(password))
+    cipher_suite = Fernet(encrypted_password)
+    decryted_data = cipher_suite.decrypt(encrypted_data)
+    return decryted_data
+
 if __name__ == '__main__':
     with open('salt', 'rb') as salt_file:
         salt = salt_file.read()
-    print(raw_encrypt(b'Hello dis is coop', b'test', salt))
+
+    data = b'Hello dis is coop'
+    password = b'testPassword'
+    encrypt = raw_encrypt(data, password, salt)
+    decrypt = raw_decrypt(encrypt, password, salt)
+    print(encrypt, decrypt)
