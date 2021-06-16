@@ -34,18 +34,26 @@ def get_salt():
 def strs_to_bytes(*args):
     return [arg.encode() if isinstance(arg, str) else arg for arg in args]
 
-def encrypt(data = False, password = False, salt = False):
+def encrypt(salt, data = False, password = False):
     print("ENCRYPT")
     data = data or input("Text: ")
     password = password or input("Password: ")
-    salt = salt or get_salt()
-
     data, password, salt = strs_to_bytes(data, password, salt)
-
     cipher_suite = get_cipher(password, salt)
-    encrypted_text = cipher_suite.encrypt(data)
-    print(encrypted_text)
+    encrypted_data = cipher_suite.encrypt(data)
+    return encrypted_data
 
+def decrypt(salt, encrypted_data = False, password = False):
+    print("DECRYPT")
+    encrypted_data = encrypted_data or input("Encrypted Data: ")
+    password = password or input("Password: ")
+    encrypted_data, password, salt = strs_to_bytes(encrypted_data, password, salt)
+    cipher_suite = get_cipher(password, salt)
+    decrypted_data = cipher_suite.decrypt(encrypted_data)
+    return decrypted_data.decode()
 
 if __name__ == '__main__':
-    encrypt('Coop', 'test')
+    e = encrypt(get_salt(), 'secret shit shhhh', 'coop')
+    print(e.decode())
+    d = decrypt(get_salt(), e, 'coop')
+    print(d)
