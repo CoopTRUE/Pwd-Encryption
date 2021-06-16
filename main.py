@@ -26,12 +26,19 @@ def raw_decrypt(encrypted_data, password, salt):
     decryted_data = cipher_suite.decrypt(encrypted_data)
     return decryted_data
 
-if __name__ == '__main__':
+def get_salt():
     with open('salt', 'rb') as salt_file:
         salt = salt_file.read()
+    return salt
 
-    data = b'Hello dis is coop'
-    password = b'testPassword'
-    encrypt = raw_encrypt(data, password, salt)
-    decrypt = raw_decrypt(encrypt, password, salt)
-    print(encrypt, decrypt)
+def encrypt(data = False, password = False, salt = False):
+    print("ENCRYPTING")
+    input_text = data or input("Text: ")
+    input_password = password or input("Password: ")
+    assert input_password == input("Confirm Password: ")
+    encrypted_text = raw_encrypt(input_text.encode(), input_password.encode(), salt or get_salt())
+    print(f"Encrypted text '{encrypted_text.decode()}'",)
+
+
+if __name__ == '__main__':
+    encrypt()
