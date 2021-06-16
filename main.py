@@ -26,11 +26,6 @@ def raw_decrypt(encrypted_data, password, salt):
     decryted_data = cipher_suite.decrypt(encrypted_data)
     return decryted_data
 
-def get_salt():
-    with open('salt', 'rb') as salt_file:
-        salt = salt_file.read()
-    return salt
-
 def strs_to_bytes(*args):
     return [arg.encode() if isinstance(arg, str) else arg for arg in args]
 
@@ -53,7 +48,9 @@ def decrypt(salt, encrypted_data = False, password = False):
     return decrypted_data.decode()
 
 if __name__ == '__main__':
-    e = encrypt(get_salt(), 'secret shit shhhh', 'coop')
+    with open('salt', 'rb') as salt_file:
+        salt = salt_file.read()
+    e = encrypt(salt)
     print(e.decode())
-    d = decrypt(get_salt(), e, 'coop')
+    d = decrypt(salt, e)
     print(d)
