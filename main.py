@@ -31,14 +31,21 @@ def get_salt():
         salt = salt_file.read()
     return salt
 
+def strs_to_bytes(*args):
+    return [arg.encode() if isinstance(arg, str) else arg for arg in args]
+
 def encrypt(data = False, password = False, salt = False):
-    print("ENCRYPTING")
-    input_text = data or input("Text: ")
-    input_password = password or input("Password: ")
-    assert input_password == input("Confirm Password: ")
-    encrypted_text = raw_encrypt(input_text.encode(), input_password.encode(), salt or get_salt())
-    print(f"Encrypted text '{encrypted_text.decode()}'",)
+    print("ENCRYPT")
+    data = data or input("Text: ")
+    password = password or input("Password: ")
+    salt = salt or get_salt()
+
+    data, password, salt = strs_to_bytes(data, password, salt)
+
+    cipher_suite = get_cipher(password, salt)
+    encrypted_text = cipher_suite.encrypt(data)
+    print(encrypted_text)
 
 
 if __name__ == '__main__':
-    encrypt()
+    encrypt('Coop', 'test')
